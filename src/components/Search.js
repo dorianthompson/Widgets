@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
 const Search = () => {
-    const [term, setTerm] = useState('');
+    const [term, setTerm] = useState('programming');
     const [results, setResults] = useState([]);
 
     useEffect(() => {
@@ -20,8 +20,20 @@ const Search = () => {
             setResults(data.query.search);
         };
 
-        if(term){
+        //handle searching on inital render
+        if(term && !results.length){
             search();
+        }
+        else {
+            const timeoutId = setTimeout(() => {
+                if(term){
+                    search();
+                }
+            }, 500);
+    
+            return () => {
+                clearTimeout(timeoutId);
+            };
         }
 
     }, [term]);
@@ -29,6 +41,14 @@ const Search = () => {
     const renderedResult = results.map((result) => {
         return (
             <div key={result.pageid} className="item">
+                <div className="right floated content">
+                    <a 
+                        className="ui button"
+                        href={`https://en.wikepedia.org?curid=${result.pageid}`}
+                    >
+                        Go
+                    </a>
+                </div>
                 <div className="content">
                     <div className="header">
                         {result.title}
